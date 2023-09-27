@@ -7,11 +7,11 @@ from airflow.providers.google.cloud.operators.gcs import GCSCreateBucketOperator
 
 from google.oauth2 import service_account
 
-SCOPES = ['https://www.googleapis.com/auth/drive.readonly','https://www.googleapis.com/auth/devstorage.full_control	']
-SERVICE_ACCOUNT_FILE = '/c/Users/tinma/OneDrive/Escritorio/HENRY/Proyecto_Grupal_HENRY/credentials/fiery-protocol-399500-f2566dd92ef4.json'
+# SCOPES = ['https://www.googleapis.com/auth/drive.readonly','https://www.googleapis.com/auth/devstorage.full_control','https://www.googleapis.com/auth/drive']
+# SERVICE_ACCOUNT_FILE = '/c/Users/tinma/OneDrive/Escritorio/HENRY/Proyecto_Grupal_HENRY/credentials/fiery-protocol-399500-f2566dd92ef4.json'
 
-credentials = service_account.Credentials.from_service_account_file(
-        SERVICE_ACCOUNT_FILE, scopes=SCOPES)
+# credentials = service_account.Credentials.from_service_account_file(
+#         SERVICE_ACCOUNT_FILE, scopes=SCOPES)
 
 
 GCPCONN = "google_cloud_henry"
@@ -69,7 +69,7 @@ def gd_to_gcs():
 		bucket_name=MY_BUCKET_NAME,
 		object_name='prueba2',
 		file_name='prueba',
-		folder_id='/talent/prueba',
+		folder_id='0AOid89EWziepUk9PVA',
 		drive_id='0AOid89EWziepUk9PVA',
 		gcp_conn_id=GCPCONN
 	)
