@@ -67,11 +67,11 @@ def gd_to_gcs():
 	)
 
 	# SDRIVE_ID = '0AOid89EWziepUk9PVA'
-	prueba2 = GoogleDriveToGCSOperator(
+	prueba2 = GoogleDriveToGCSOperator( # Se encontró un inconveniente al transferir archivos que sean documentos de google, para ello habrá que utilizar la API y el método "export_media" y convertirlos a formatos aceptables.
 		task_id = 'prueba2',
 		bucket_name=MY_BUCKET_NAME,
 		object_name='prueba2',
-		file_name='prueba',
+		file_name='Copia de Temas emergentes.docx',
 		folder_id=MY_FOLDER_ID,
 		# drive_id=SDRIVE_ID,
 		gcp_conn_id=GCPCONN
@@ -173,6 +173,6 @@ def gd_to_gcs():
 					trigger_rule='all_success'
 				)
 
-	delete_bucket >> create_bucket >> [prueba1,prueba2] >> extract_load_yelp >> extract_load_maps_meta >> [extract_load_maps_newyork, extract_load_maps_california, extract_load_maps_texas, extract_load_maps_colorado, extract_load_maps_georgia]
+	delete_bucket >> create_bucket >> [prueba1,prueba2] >> extract_load_maps_meta >> extract_load_yelp >> extract_load_maps_newyork >> extract_load_maps_california >> extract_load_maps_texas >> extract_load_maps_colorado >> extract_load_maps_georgia
 
 dag = gd_to_gcs()
