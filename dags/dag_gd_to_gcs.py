@@ -54,26 +54,30 @@ def gd_to_gcs():
 		gcp_conn_id = GCPCONN
 	)
 
+	MY_FOLDER_ID = '1y1XFty1aIIvAix3F8qpJMqnC_YiTIXyP'
+# Probando funcionalidad
 	prueba1 = GoogleDriveToGCSOperator(
 		task_id = 'prueba1',
 		bucket_name=MY_BUCKET_NAME,
-		object_name='prueba1',
-		file_name='prueba',
-		folder_id='/my-drive',
-		# drive_id=MY_FOLDER_ID,
+		object_name='prueba1.docx',
+		file_name='Diccionario de datos.docx',
+		folder_id=MY_FOLDER_ID,
+		# drive_id=SDRIVE_ID,
 		gcp_conn_id=GCPCONN
 	)
 
+	# SDRIVE_ID = '0AOid89EWziepUk9PVA'
 	prueba2 = GoogleDriveToGCSOperator(
 		task_id = 'prueba2',
 		bucket_name=MY_BUCKET_NAME,
 		object_name='prueba2',
 		file_name='prueba',
-		folder_id='0AOid89EWziepUk9PVA',
-		drive_id='0AOid89EWziepUk9PVA',
+		folder_id=MY_FOLDER_ID,
+		# drive_id=SDRIVE_ID,
 		gcp_conn_id=GCPCONN
 	)
 
+# Carga de datos formal
 	# Carga de datos Yelp
 	MY_FOLDER_ID = '1TI-SsMnZsNP6t930olEEWbBQdo_yuIZF' # Folder de Yelp
 	for MY_FILE_NAME in ['user.parquet','tip.json','review.json','business.pkl']:
@@ -84,7 +88,8 @@ def gd_to_gcs():
 			file_name=MY_FILE_NAME,
 			folder_id=MY_FOLDER_ID,
 			drive_id=MY_FOLDER_ID,
-			gcp_conn_id=GCPCONN
+			gcp_conn_id=GCPCONN,
+			trigger_rule='all_success'
 		)
 
 	# Cargar datos de Maps Metadata
@@ -97,7 +102,8 @@ def gd_to_gcs():
 			file_name=f'{MY_FILE_NAME}.json',
 			folder_id=MY_FOLDER_ID,
 			# drive_id=MY_FOLDER_ID,
-			gcp_conn_id=GCPCONN
+			gcp_conn_id=GCPCONN,
+			trigger_rule='all_success'
 		)
 
 	# Cargar datos de Maps Estados
@@ -111,7 +117,8 @@ def gd_to_gcs():
 					file_name=f'{MY_FILE_NAME}.json',
 					folder_id=MY_FOLDER_ID,
 					# drive_id=MY_FOLDER_ID,
-					gcp_conn_id=GCPCONN
+					gcp_conn_id=GCPCONN,
+					trigger_rule='all_success'
 				)
 
 		if OBJECT_NAME == 'review-California':
@@ -123,7 +130,8 @@ def gd_to_gcs():
 					file_name=f'{MY_FILE_NAME}.json',
 					folder_id=MY_FOLDER_ID,
 					# drive_id=MY_FOLDER_ID,
-					gcp_conn_id=GCPCONN
+					gcp_conn_id=GCPCONN,
+					trigger_rule='all_success'
 				)
 
 		if OBJECT_NAME == 'review-Texas':
@@ -135,7 +143,8 @@ def gd_to_gcs():
 					file_name=f'{MY_FILE_NAME}.json',
 					folder_id=MY_FOLDER_ID,
 					# drive_id=MY_FOLDER_ID,
-					gcp_conn_id=GCPCONN
+					gcp_conn_id=GCPCONN,
+					trigger_rule='all_success'
 					)
 
 		if OBJECT_NAME == 'review-Colorado':
@@ -147,7 +156,8 @@ def gd_to_gcs():
 					file_name=f'{MY_FILE_NAME}.json',
 					folder_id=MY_FOLDER_ID,
 					# drive_id=MY_FOLDER_ID,
-					gcp_conn_id=GCPCONN
+					gcp_conn_id=GCPCONN,
+					trigger_rule='all_success'
 				)
 
 		if OBJECT_NAME == 'review-Georgia':
@@ -159,9 +169,10 @@ def gd_to_gcs():
 					file_name=f'{MY_FILE_NAME}.json',
 					folder_id=MY_FOLDER_ID,
 					# drive_id=MY_FOLDER_ID,
-					gcp_conn_id=GCPCONN
+					gcp_conn_id=GCPCONN,
+					trigger_rule='all_success'
 				)
 
-	delete_bucket >> create_bucket >> [prueba1,prueba2] >> extract_load_yelp >> extract_load_maps_meta >> extract_load_maps_newyork >> extract_load_maps_california >> extract_load_maps_texas >> extract_load_maps_colorado >> extract_load_maps_georgia
+	delete_bucket >> create_bucket >> [prueba1,prueba2] >> extract_load_yelp >> extract_load_maps_meta >> [extract_load_maps_newyork, extract_load_maps_california, extract_load_maps_texas, extract_load_maps_colorado, extract_load_maps_georgia]
 
 dag = gd_to_gcs()
