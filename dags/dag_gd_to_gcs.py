@@ -7,8 +7,6 @@ from airflow.providers.google.cloud.operators.gcs import GCSCreateBucketOperator
 
 from google.oauth2 import service_account
 
-import socket    
-
 # SCOPES = ['https://www.googleapis.com/auth/drive.readonly','https://www.googleapis.com/auth/devstorage.full_control','https://www.googleapis.com/auth/drive']
 # SERVICE_ACCOUNT_FILE = '/c/Users/tinma/OneDrive/Escritorio/HENRY/Proyecto_Grupal_HENRY/credentials/fiery-protocol-399500-f2566dd92ef4.json'
 
@@ -19,9 +17,6 @@ import socket
 GCPCONN = "google_cloud_henry"
 MY_BUCKET_NAME = 'data-lake-henry'
 HENRY_PROJECT = 'fiery-protocol-399500'
-socket.setdefaulttimeout(60*45)
-
-
 
 default_args = {
 		'owner':'Tinmar Andrade',
@@ -30,7 +25,6 @@ default_args = {
 		'email_on_failure':True,
 	}
 
-
 @dag(
 	'gd_to_gcs',
 	default_args=default_args,
@@ -38,7 +32,6 @@ default_args = {
 	schedule=None,
 	tags=['HENRY','Proyecto Final','Proyecto en Equipo']
 	)
-
 
 def gd_to_gcs():
 
@@ -58,32 +51,7 @@ def gd_to_gcs():
 		gcp_conn_id = GCPCONN
 	)
 
-# 	MY_FOLDER_ID = '1y1XFty1aIIvAix3F8qpJMqnC_YiTIXyP'
-# # Probando funcionalidad
-# 	prueba1 = GoogleDriveToGCSOperator(
-# 		task_id = 'prueba1',
-# 		bucket_name=MY_BUCKET_NAME,
-# 		object_name='review1.docx',
-# 		file_name='review_tx_1.json',
-# 		folder_id= 'my-drive',# MY_FOLDER_ID,
-# 		# drive_id=SDRIVE_ID,
-# 		gcp_conn_id=GCPCONN
-# 	)
-
-# 	# SDRIVE_ID = '0AOid89EWziepUk9PVA'
-# 	prueba2 = GoogleDriveToGCSOperator( # Se encontró un inconveniente al transferir archivos que sean documentos de google, para ello habrá que utilizar la API y el método "export_media" y convertirlos a formatos aceptables.
-# 		task_id = 'prueba2',
-# 		bucket_name=MY_BUCKET_NAME,
-# 		object_name='prueba2',
-# 		file_name='Copia de Temas emergentes.docx',
-# 		folder_id= MY_FOLDER_ID,
-# 		# drive_id=SDRIVE_ID,
-# 		gcp_conn_id=GCPCONN
-# 	)
-
-# Carga de datos formal
 	# Carga de datos Yelp
-
 	@task_group(
 		group_id="yelp_load"
 	)
@@ -97,14 +65,12 @@ def gd_to_gcs():
 				object_name=MY_FILE_NAME,
 				file_name=MY_FILE_NAME,
 				folder_id=MY_FOLDER_ID,
-				# drive_id=MY_FOLDER_ID,
 				gcp_conn_id=GCPCONN,
 				trigger_rule='all_done',
 				execution_timeout=timedelta(seconds=60*45)
 			)
 
 	# Cargar datos de Maps Metadata
-
 	@task_group(
 		group_id="maps_meta_load"
 	)
@@ -118,7 +84,6 @@ def gd_to_gcs():
 				object_name=f'metadata_{MY_FILE_NAME}.json',
 				file_name=f'{MY_FILE_NAME}.json',
 				folder_id=MY_FOLDER_ID,
-				# drive_id=MY_FOLDER_ID,
 				gcp_conn_id=GCPCONN,
 				trigger_rule='all_done',
 				execution_timeout=timedelta(seconds=60*45)
@@ -139,7 +104,6 @@ def gd_to_gcs():
 				object_name=f'{OBJECT_NAME[0][7:]}_{MY_FILE_NAME}.json',
 				file_name=f'{MY_FILE_NAME}.json',
 				folder_id=MY_FOLDER_ID[0],
-				# drive_id=MY_FOLDER_ID,
 				gcp_conn_id=GCPCONN,
 				trigger_rule='all_done',
 				execution_timeout=timedelta(seconds=60*45)
@@ -157,7 +121,6 @@ def gd_to_gcs():
 				object_name=f'{OBJECT_NAME[1][7:]}_{MY_FILE_NAME}.json',
 				file_name=f'{MY_FILE_NAME}.json',
 				folder_id=MY_FOLDER_ID[1],
-				# drive_id=MY_FOLDER_ID,
 				gcp_conn_id=GCPCONN,
 				trigger_rule='all_done',
 				execution_timeout=timedelta(seconds=60*45)
@@ -175,7 +138,6 @@ def gd_to_gcs():
 				object_name=f'{OBJECT_NAME[2][7:]}_{MY_FILE_NAME}.json',
 				file_name=f'{MY_FILE_NAME}.json',
 				folder_id=MY_FOLDER_ID[2],
-				# drive_id=MY_FOLDER_ID,
 				gcp_conn_id=GCPCONN,
 				trigger_rule='all_done',
 				execution_timeout=timedelta(seconds=60*45)
@@ -193,7 +155,6 @@ def gd_to_gcs():
 				object_name=f'{OBJECT_NAME[3][7:]}_{MY_FILE_NAME}.json',
 				file_name=f'{MY_FILE_NAME}.json',
 				folder_id=MY_FOLDER_ID[3],
-				# drive_id=MY_FOLDER_ID,
 				gcp_conn_id=GCPCONN,
 				trigger_rule='all_done',
 				execution_timeout=timedelta(seconds=60*45)
@@ -211,15 +172,10 @@ def gd_to_gcs():
 				object_name=f'{OBJECT_NAME[4][7:]}_{MY_FILE_NAME}.json',
 				file_name=f'{MY_FILE_NAME}.json',
 				folder_id=MY_FOLDER_ID[4],
-				# drive_id=MY_FOLDER_ID,
 				gcp_conn_id=GCPCONN,
 				trigger_rule='all_done',
 				execution_timeout=timedelta(seconds=60*45)
 			)
-
-	# delete_bucket >> create_bucket >> [prueba1,prueba2] >> extract_load_maps_meta >> extract_load_yelp >> extract_load_maps_newyork >> extract_load_maps_california >> extract_load_maps_texas >> extract_load_maps_colorado >> extract_load_maps_georgia
-
-	# delete_bucket >> create_bucket >> extract_load_maps_meta >> extract_load_yelp >> extract_load_maps_newyork >> extract_load_maps_california >> extract_load_maps_texas >> extract_load_maps_colorado >> extract_load_maps_georgia
 
 	delete_bucket >> create_bucket >> tg1() >> tg2() >> tg3() >> tg4() >> tg5() >> tg6() >> tg7()
 
