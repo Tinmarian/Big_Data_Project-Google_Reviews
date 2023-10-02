@@ -89,7 +89,7 @@ def gd_to_gcs():
 	)
 	def tg1():
 		MY_FOLDER_ID = '1IcC0SiBY2UeyRUn7gcs2PfIhwptvDRdk' # Folder de Yelp
-		for MY_FILE_NAME in ['user.parquet','tip.json','review.json','business.pkl','checkin.json']:
+		for MY_FILE_NAME in ['user.parquet','tip.json','review.json','business.pkl']: # ,'checkin.json']:
 			extract_load_yelp = GoogleDriveToGCSOperator(
 				task_id = f'extract_load_yelp_{MY_FILE_NAME}',
 				retries = 5,
