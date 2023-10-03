@@ -1,26 +1,26 @@
-from airflow.decorators import dag, task, task_group
+# from airflow.decorators import dag, task, task_group
 
-from airflow.providers.google.cloud.transfers.gcs_to_bigquery import GCSToBigQueryOperator
-from airflow.contrib.operators.bigquery_operator import BigQueryCreateEmptyDatasetOperator
+# from airflow.providers.google.cloud.transfers.gcs_to_bigquery import GCSToBigQueryOperator
+# from airflow.contrib.operators.bigquery_operator import BigQueryCreateEmptyDatasetOperator
 
-from datetime import datetime, timedelta
-
-
-
-GCPCONN = "google_cloud_henry"
-PROJECT = 'fiery-protocol-399500'
-MY_BUCKET = 'data-lake-henry'
-DATASET_PRUEBA = 'pruebas_fph'
-DESTINATION_TABLE = 'dcs_review_texas'
+# from datetime import datetime, timedelta
 
 
-default_args = {
-    "owner" : 'Tinmar Andrade',
-		'start_date':datetime(2023,9,20),
-        'schedule' : None,
-		'email':['tinmar96@gmail.com','jozz.rom@gmail.com'],
-		'email_on_failure':True
-}
+
+# GCPCONN = "google_cloud_henry"
+# PROJECT = 'fiery-protocol-399500'
+# MY_BUCKET = 'data-lake-henry'
+# DATASET_PRUEBA = 'pruebas_fph'
+# DESTINATION_TABLE = 'dcs_review_texas'
+
+
+# default_args = {
+#     "owner" : 'Tinmar Andrade',
+# 		'start_date':datetime(2023,9,20),
+#         'schedule' : None,
+# 		'email':['tinmar96@gmail.com','jozz.rom@gmail.com'],
+# 		'email_on_failure':True
+# }
 
 # def listar():
 #     list_files = []
@@ -47,12 +47,12 @@ default_args = {
 #                         'Texas_15.json',
 #                         'Texas_16.json']
 
-@dag(
-    'gcs_to_bq',
-    default_args = default_args,
-    catchup = False,
-    tags = ['HENRY','Proyecto Final','Proyecto en Equipo','Limpieza','Primeras Transformaciones']
-)
+# @dag(
+#     'gcs_to_bq',
+#     default_args = default_args,
+#     catchup = False,
+#     tags = ['HENRY','Proyecto Final','Proyecto en Equipo','Limpieza','Primeras Transformaciones']
+# )
 
     # gcs_to_bq_prueba = GCSToBigQueryOperator(
     #                                         task_id = 'prueba',
