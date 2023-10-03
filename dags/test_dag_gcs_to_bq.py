@@ -1,4 +1,4 @@
-from airflow.decorators import dag, task, task_group
+from airflow.decorators import dag, task_group
 
 from airflow.providers.google.cloud.transfers.gcs_to_bigquery import GCSToBigQueryOperator
 from airflow.contrib.operators.bigquery_operator import BigQueryCreateEmptyDatasetOperator
@@ -48,13 +48,13 @@ MY_SOURCE_OBJECTS = ['Texas_1.json',
                         'Texas_16.json']
 
 @dag(
-    'gcs_to_bq',
+    'test_gcs_to_bq',
     default_args = default_args,
     catchup = False,
-    tags = ['HENRY','Proyecto Final','Proyecto en Equipo','Limpieza','Primeras Transformaciones']
+    tags = ['Prueba','GCS a BQ']
 )
 
-def gcs_to_bq_limpieza():
+def test_gcs_to_bq():
     
     # Creamos el dataset donde vamos a almacenar los datos. Primero crearemos un dataset para hacer pruebas
 
@@ -101,4 +101,4 @@ def gcs_to_bq_limpieza():
 
     create_dataset >> tg1()
 
-dag = gcs_to_bq_limpieza()
+dag = test_gcs_to_bq()
