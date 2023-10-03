@@ -29,6 +29,8 @@ PROJECT = 'fiery-protocol-399500'
 #         list_files.append(x)
 
 MY_SOURCE_OBJECTS = ['Texas_1.json',
+                        '1_test.json',
+                        '1_test.ndjson',
                         'Texas_2.json',
                         'Texas_3.json',
                         'Texas_4.json',
@@ -66,31 +68,62 @@ def gcs_to_bq_limpieza():
                                                     )
 
     # Tabla de las Reviews de Texas.
-    gcs_to_bq_prueba = GCSToBigQueryOperator(
-                                            task_id = 'prueba',
-                                            bucket=MY_BUCKET,
-                                            source_objects=MY_SOURCE_OBJECTS,
-                                            destination_project_dataset_table= f'{DATASET_PRUEBA}.{DESTINATION_TABLE}',# MY_DESTINATION_PROJECT_DATASET_TABLE,
-                                            schema_fields=[{'name':'user_id','type':'BIGNUMERIC','mode':'REQUIRED'}, 
-                                                            {'name':'name','type':'STRING','mode':'NULLABLE'}, 
-                                                            {'name':'time','type':'INT64','mode':'REQUIRED'}, 
-                                                            {'name':'rating','type':'INT64','mode':'NULLABLE'}, 
-                                                            {'name':'text','type':'STRING','mode':'NULLABLE'}, 
-                                                            {'name':'pics','type':'STRING','mode':'NULLABLE'}, 
-                                                            {'name':'resp','type':'STRING','mode':'NULLABLE'}, 
-                                                            {'name':'gmap_id','type':'STRING','mode':'REQUIRED'}
-                                                        ],
-                                            autodetect=True,
-                                            source_format="NEWLINE_DELIMITED_JSON",
-                                            create_disposition="CREATE_IF_NEEDED",
-                                            skip_leading_rows="None",
-                                            write_disposition="WRITE_TRUNCATE", # WRITE_APPEND,
-                                            field_delimiter=",",
-                                            encoding="UTF-8",
-                                            gcp_conn_id=GCPCONN,
-                                            location="us-east1",
-                                            job_id="prueba_texas"
-                                        )
+    @task_group(
+        group_id = 'TEXAS'
+    )
+    def tg1():
+        for OBJECT in MY_SOURCE_OBJECTS:
+            gcs_to_bq_prueba = GCSToBigQueryOperator(
+                                                    task_id = f'prueba_{OBJECT}',
+                                                    bucket=MY_BUCKET,
+                                                    source_objects=OBJECT,
+                                                    destination_project_dataset_table= f'{DATASET_PRUEBA}.{DESTINATION_TABLE}',# MY_DESTINATION_PROJECT_DATASET_TABLE,
+                                                    schema_fields=[{'name':'user_id','type':'INT64','mode':'REQUIRED'}, 
+                                                                    {'name':'name','type':'STRING','mode':'NULLABLE'}, 
+                                                                    {'name':'time','type':'INT64','mode':'REQUIRED'}, 
+                                                                    {'name':'rating','type':'INT64','mode':'NULLABLE'}, 
+                                                                    {'name':'text','type':'STRING','mode':'NULLABLE'}, 
+                                                                    {'name':'gmap_id','type':'STRING','mode':'REQUIRED'}, 
+                                                                    {'name':'resp_time','type':'INT64','mode':'NULLABLE'}, 
+                                                                    {'name':'resp_text','type':'STRING','mode':'NULLABLE'}
+                                                                ],
+                                                    autodetect=True,
+                                                    source_format="NEWLINE_DELIMITED_JSON",
+                                                    create_disposition="CREATE_IF_NEEDED",
+                                                    skip_leading_rows="None",
+                                                    write_disposition="WRITE_TRUNCATE", # WRITE_APPEND,
+                                                    field_delimiter=",",
+                                                    encoding="UTF-8",
+                                                    gcp_conn_id=GCPCONN,
+                                                    location="us-east1",
+                                                    job_id="prueba_texas"
+                                                )
+        
+    # gcs_to_bq_prueba = GCSToBigQueryOperator(
+    #                                         task_id = 'prueba',
+    #                                         bucket=MY_BUCKET,
+    #                                         source_objects=MY_SOURCE_OBJECTS,
+    #                                         destination_project_dataset_table= f'{DATASET_PRUEBA}.{DESTINATION_TABLE}',# MY_DESTINATION_PROJECT_DATASET_TABLE,
+    #                                         schema_fields=[{'name':'user_id','type':'BIGNUMERIC','mode':'REQUIRED'}, 
+    #                                                         {'name':'name','type':'STRING','mode':'NULLABLE'}, 
+    #                                                         {'name':'time','type':'INT64','mode':'REQUIRED'}, 
+    #                                                         {'name':'rating','type':'INT64','mode':'NULLABLE'}, 
+    #                                                         {'name':'text','type':'STRING','mode':'NULLABLE'}, 
+    #                                                         {'name':'pics','type':'STRING','mode':'NULLABLE'}, 
+    #                                                         {'name':'resp','type':'STRING','mode':'NULLABLE'}, 
+    #                                                         {'name':'gmap_id','type':'STRING','mode':'REQUIRED'}
+    #                                                     ],
+    #                                         autodetect=True,
+    #                                         source_format="NEWLINE_DELIMITED_JSON",
+    #                                         create_disposition="CREATE_IF_NEEDED",
+    #                                         skip_leading_rows="None",
+    #                                         write_disposition="WRITE_TRUNCATE", # WRITE_APPEND,
+    #                                         field_delimiter=",",
+    #                                         encoding="UTF-8",
+    #                                         gcp_conn_id=GCPCONN,
+    #                                         location="us-east1",
+    #                                         job_id="prueba_texas"
+    #                                     )
     
     # # Tabla de las Reviews de New York.
     # gcs_to_bq = f = GCSToBigQueryOperator(
@@ -160,6 +193,6 @@ def gcs_to_bq_limpieza():
     # job_id="prueba_texas"
     # )
     
-    create_dataset >> gcs_to_bq_prueba
+    create_dataset >> tg1()
     
 dag = gcs_to_bq_limpieza()
