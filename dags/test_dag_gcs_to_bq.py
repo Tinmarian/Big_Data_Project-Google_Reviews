@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 
 default_args = {
     "owner" : 'Tinmar Andrade',
-		'start_date':datetime(2023,9,20),
+		'start_date':datetime(2023,9,30),
         'schedule' : None,
 		'email':['tinmar96@gmail.com','jozz.rom@gmail.com'],
 		'email_on_failure':True
@@ -98,101 +98,7 @@ def gcs_to_bq_limpieza():
                                                     location="us-east1",
                                                     job_id="prueba_texas"
                                                 )
-        
-    # gcs_to_bq_prueba = GCSToBigQueryOperator(
-    #                                         task_id = 'prueba',
-    #                                         bucket=MY_BUCKET,
-    #                                         source_objects=MY_SOURCE_OBJECTS,
-    #                                         destination_project_dataset_table= f'{DATASET_PRUEBA}.{DESTINATION_TABLE}',# MY_DESTINATION_PROJECT_DATASET_TABLE,
-    #                                         schema_fields=[{'name':'user_id','type':'BIGNUMERIC','mode':'REQUIRED'}, 
-    #                                                         {'name':'name','type':'STRING','mode':'NULLABLE'}, 
-    #                                                         {'name':'time','type':'INT64','mode':'REQUIRED'}, 
-    #                                                         {'name':'rating','type':'INT64','mode':'NULLABLE'}, 
-    #                                                         {'name':'text','type':'STRING','mode':'NULLABLE'}, 
-    #                                                         {'name':'pics','type':'STRING','mode':'NULLABLE'}, 
-    #                                                         {'name':'resp','type':'STRING','mode':'NULLABLE'}, 
-    #                                                         {'name':'gmap_id','type':'STRING','mode':'REQUIRED'}
-    #                                                     ],
-    #                                         autodetect=True,
-    #                                         source_format="NEWLINE_DELIMITED_JSON",
-    #                                         create_disposition="CREATE_IF_NEEDED",
-    #                                         skip_leading_rows="None",
-    #                                         write_disposition="WRITE_TRUNCATE", # WRITE_APPEND,
-    #                                         field_delimiter=",",
-    #                                         encoding="UTF-8",
-    #                                         gcp_conn_id=GCPCONN,
-    #                                         location="us-east1",
-    #                                         job_id="prueba_texas"
-    #                                     )
-    
-    # # Tabla de las Reviews de New York.
-    # gcs_to_bq = f = GCSToBigQueryOperator(
-    # bucket=MY_BUCKET,
-    # source_objects=MY_SOURCE_OBJECTS,
-    # destination_project_dataset_table= f'{DATASET_PRUEBA}.{DESTINATION_TABLE}',# MY_DESTINATION_PROJECT_DATASET_TABLE,
-    # schema_fields="None",
-    # source_format="JSON",
-    # create_disposition="CREATE_IF_NEEDED",
-    # skip_leading_rows="None",
-    # write_disposition="WRITE_TRUNCATE", # WRITE_APPEND,
-    # field_delimiter=",",
-    # encoding="UTF-8",
-    # gcp_conn_id=GCPCONN,
-    # location="None",
-    # job_id="prueba_texas"
-    # )
-    
-    # # Tabla de las Reviews de California.
-    # gcs_to_bq = f = GCSToBigQueryOperator(
-    # bucket=MY_BUCKET,
-    # source_objects=MY_SOURCE_OBJECTS,
-    # destination_project_dataset_table= f'{DATASET_PRUEBA}.{DESTINATION_TABLE}',# MY_DESTINATION_PROJECT_DATASET_TABLE,
-    # schema_fields="None",
-    # source_format="JSON",
-    # create_disposition="CREATE_IF_NEEDED",
-    # skip_leading_rows="None",
-    # write_disposition="WRITE_TRUNCATE", # WRITE_APPEND,
-    # field_delimiter=",",
-    # encoding="UTF-8",
-    # gcp_conn_id=GCPCONN,
-    # location="None",
-    # job_id="prueba_texas"
-    # )
-    
-    # # Tabla de las Reviews de Colorado.
-    # gcs_to_bq = f = GCSToBigQueryOperator(
-    # bucket=MY_BUCKET,
-    # source_objects=MY_SOURCE_OBJECTS,
-    # destination_project_dataset_table= f'{DATASET_PRUEBA}.{DESTINATION_TABLE}',# MY_DESTINATION_PROJECT_DATASET_TABLE,
-    # schema_fields="None",
-    # source_format="JSON",
-    # create_disposition="CREATE_IF_NEEDED",
-    # skip_leading_rows="None",
-    # write_disposition="WRITE_TRUNCATE", # WRITE_APPEND,
-    # field_delimiter=",",
-    # encoding="UTF-8",
-    # gcp_conn_id=GCPCONN,
-    # location="None",
-    # job_id="prueba_texas"
-    # )
-    
-    # # Tabla de las Reviews de Georgia.
-    # gcs_to_bq = f = GCSToBigQueryOperator(
-    # bucket=MY_BUCKET,
-    # source_objects=MY_SOURCE_OBJECTS,
-    # destination_project_dataset_table= f'{DATASET_PRUEBA}.{DESTINATION_TABLE}',# MY_DESTINATION_PROJECT_DATASET_TABLE,
-    # schema_fields="None",
-    # source_format="JSON",
-    # create_disposition="CREATE_IF_NEEDED",
-    # skip_leading_rows="None",
-    # write_disposition="WRITE_TRUNCATE", # WRITE_APPEND,
-    # field_delimiter=",",
-    # encoding="UTF-8",
-    # gcp_conn_id=GCPCONN,
-    # location="None",
-    # job_id="prueba_texas"
-    # )
-    
+
     create_dataset >> tg1()
-    
+
 dag = gcs_to_bq_limpieza()
