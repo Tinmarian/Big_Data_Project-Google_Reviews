@@ -1,10 +1,11 @@
 import math
 import pandas as pd
+import numpy as np
 import os
 
 from pyspark.sql import SparkSession
 from pyspark.sql.utils import AnalysisException
-from pyspark.sql.types import IntegerType,StructField,StructType,StringType
+from pyspark.sql.types import IntegerType,StructField,StructType,StringType,ObjectType
 import pyspark.pandas as ps
 
 # Create a SparkSession
@@ -12,17 +13,15 @@ spk = SparkSession.builder.appName("PySpark Transformations to Populate our Data
 # cwd = os.getcwd()
 
 states = ['California','Texas','New_York','Colorado','Georgia']
-newDF = [
+schema = StructType([
     StructField('user_id',IntegerType(),False),
     StructField('name',StringType(),True),
     StructField('time',IntegerType(),True),
     StructField('rating',IntegerType(),True),
     StructField('text',StringType(),True),
-    StructField('gmap_id',StringType(),False),
-    StructField('resp_time',IntegerType(),True),
-    StructField('resp_text',StringType(),True)
-]
-FINAL_STRUCT=StructType(fields=newDF)
+    StructField('resp',ObjectType(),True),
+    StructField('gmap_id',StringType(),False)
+])
 
 for state in states:
     
@@ -33,7 +32,7 @@ for state in states:
     while True:
         try:
             # Leemos los archivos en un SPARK Data Frame para poder acceder directamente a GCS
-            sdf = spk.read.json(f'gs://data-lake-henry/{state}_{i}.json',schema=FINAL_STRUCT)
+            sdf = spk.read.schema(schema).json(f'gs://data-lake-henry/{state}_{i}.json')[['user_id','name','time','rating','text','resp','gmap_id']]
             # PANDAS API Data Frame: Paso intermedio para generar un PANDAS Data Frame.
             psdf = sdf.pandas_api()
             df_list.append(psdf)
@@ -43,8 +42,8 @@ for state in states:
     psdfx = ps.concat(df_list,axis=0)
     
     # Generamos el primer grupo de transformaciones para los datos de las reviews de Maps en PANDAS API. Queda la metadata y los archivos de Yelp.
-    psdfx['resp_time'] = ps.Series()
-    psdfx['resp_text'] = ps.Series()
+    psdfx['resp_time'] = ps.Series(dtype=np.int64)
+    psdfx['resp_text'] = ps.Series(dtype=np.int64)
     for i in range(len(psdfx)):
         if type(psdfx.resp[i]) == dict:
             psdfx.loc[i,'resp_time'] = psdfx.resp[i]['time']
