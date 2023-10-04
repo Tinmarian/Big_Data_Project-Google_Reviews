@@ -1,17 +1,19 @@
 from airflow.decorators import dag,task,task_group
 
 from airflow.providers.google.cloud.operators.dataproc import DataprocCreateClusterOperator, DataprocSubmitJobOperator, DataprocDeleteClusterOperator
+from airflow.providers.google.cloud.operators.gcs import GCSCreateBucketOperator
 
 from datetime import datetime, timedelta
 
 
 GCPCONN = "google_cloud_henry"
-PROJECT_ID = 'fiery-protocol-399500'
+HENRY_PROJECT = 'fiery-protocol-399500'
 CLUSTER_NAME = 'test-dataproc-henry'
 REGION = 'us-east1'
+MY_BUCKET_NAME = 'dataproc-pyspark-ops'
 
 
-PYSPARK_URI = 'gs://data-lake-henry/pyspark-jobs/test_job.py'
+PYSPARK_URI = 'gs://dataproc-pyspark-ops/pyspark-jobs/cleaning-stage/testing/test_job.py'
 CLUSTER_CONFIG = {
     "master_config" : {
         "machine_type_uri" : "n2-standard-2",
@@ -28,7 +30,7 @@ CLUSTER_CONFIG = {
 }
 
 PYSPARK_JOB = {
-    "reference" : {"project_id":PROJECT_ID},
+    "reference" : {"project_id":HENRY_PROJECT},
     "placement" : {"cluster_name":CLUSTER_NAME},
     "pyspark_job": {"main_python_file_uri":PYSPARK_URI,}
 }
@@ -50,10 +52,19 @@ default_args = {
 )
 
 def test_gcs_to_dataproc():
+    
+    create_bucket = GCSCreateBucketOperator(
+                                            task_id = 'create_bucket',
+                                            bucket_name = MY_BUCKET_NAME,
+                                            location = 'us-east1',
+                                            project_id = HENRY_PROJECT,
+                                            storage_class = 'STANDARD',
+                                            gcp_conn_id = GCPCONN
+                                        )
 
     create_cluster = DataprocCreateClusterOperator(
                                                     task_id='create_dataproc_cluster',
-                                                    project_id=PROJECT_ID,
+                                                    project_id=HENRY_PROJECT,
                                                     cluster_config=CLUSTER_CONFIG,
                                                     region=REGION,
                                                     cluster_name=CLUSTER_NAME,
@@ -64,7 +75,7 @@ def test_gcs_to_dataproc():
     job = DataprocSubmitJobOperator(
                                     task_id='pyspark_job',
                                     job=PYSPARK_JOB,
-                                    project_id=PROJECT_ID,
+                                    project_id=HENRY_PROJECT,
                                     region=REGION,
                                     gcp_conn_id=GCPCONN,
                                     trigger_rule='all_success'
@@ -72,13 +83,13 @@ def test_gcs_to_dataproc():
     
     delete_cluster = DataprocDeleteClusterOperator(
                                                     task_id='delete_dataproc_cluster',
-                                                    project_id=PROJECT_ID,
+                                                    project_id=HENRY_PROJECT,
                                                     region=REGION,
                                                     cluster_name=CLUSTER_NAME,
                                                     gcp_conn_id=GCPCONN,
                                                     trigger_rule='all_done'
                                                 )
     
-    create_cluster >> job >> delete_cluster
+    create_bucket >> create_cluster >> job >> delete_cluster
     
 dag = test_gcs_to_dataproc()

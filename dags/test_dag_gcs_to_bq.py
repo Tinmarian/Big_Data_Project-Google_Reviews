@@ -28,7 +28,7 @@ PROJECT = 'fiery-protocol-399500'
 #         x = f'Texas_{i}.json'
 #         list_files.append(x)
 
-MY_SOURCE_OBJECTS = ['1_test.ndjson',
+MY_SOURCE_OBJECTS = ['1_test.ndjson']
                         # 'Texas_1.json',
                         # '1_test.json',
                         # 'Texas_2.json',

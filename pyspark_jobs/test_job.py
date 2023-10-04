@@ -28,17 +28,17 @@ psdfx = ps.concat(df_list,axis=0)
 
 sdf = psdf.to_spark()
 
-sdf.write.mode('overwrite').format('json').save('gs://data-lake-henry/out_dataproc/all_california_raw')
+sdf.write.mode('overwrite').format('json').save('gs://dataproc-pyspark-ops/out_dataproc/all_california_raw')
 
 var = [('Hello PySpark!', 'this is my first DIY job on pyspark', 'let\'s do this')]
 
 prueba = spk.createDataFrame(var, StringType())
 
-prueba.write.mode('overwrite').format('text').save('gs://data-lake-henry/out_dataproc/prueba1.txt')
+prueba.write.mode('overwrite').format('text').save('gs://dataproc-pyspark-ops/out_dataproc/prueba1.txt')
 
-df = spk.read.text('gs://data-lake-henry/pyspark-jobs/testing_job.txt')
+df = spk.read.text('gs://dataproc-pyspark-ops/pyspark-jobs/cleaning-stage/testing/testing_job.txt')
 
-df.write.mode('overwrite').format('text').save('gs://data-lake-henry/out_dataproc/prueba2.txt')
+df.write.mode('overwrite').format('text').save('gs://dataproc-pyspark-ops/out_dataproc/prueba2.txt')
 
 # gs://data-lake-henry/pyspark-jobs/testing_job.txt
 
