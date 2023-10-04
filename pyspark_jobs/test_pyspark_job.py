@@ -6,10 +6,17 @@ import pyspark.pandas as ps
 
 
 
-
-
 # Create a SparkSession
 spk = SparkSession.builder.appName("Testing PySpark Example").getOrCreate()
+
+
+
+sdf = spk.read.json('gs://data-lake-henry/California_1.json') 
+
+psdf = sdf.pandas_api()
+
+
+
 
 columns = ['first','second','third']
 var = ['Hello_PySpark', 'this is my first DIY job on pyspark', 'let\'s do this']
