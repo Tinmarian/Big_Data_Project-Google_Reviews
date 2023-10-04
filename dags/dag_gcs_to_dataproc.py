@@ -2,6 +2,8 @@ from airflow.decorators import dag,task,task_group
 
 from airflow.providers.google.cloud.operators.dataproc import DataprocCreateClusterOperator, DataprocSubmitJobOperator, DataprocDeleteClusterOperator
 
+from google.cloud import storage
+from google.oauth2 import service_account
 from datetime import datetime, timedelta
 
 
@@ -9,10 +11,11 @@ GCPCONN = "google_cloud_henry"
 PROJECT_ID = 'fiery-protocol-399500'
 CLUSTER_NAME = 'test-dataproc-henry'
 REGION = 'us-east1'
-MY_BUCKET = 'gs://data-lake-henry/'
+MY_BUCKET_NAME = 'dataproc-pyspark-ops'
+STATES = ['California','Texas','New_York','Colorado','Georgia']
 
 
-PYSPARK_URI = 'gs://data-lake-henry/pyspark-jobs/test_pyspark_job.py'
+PYSPARK_URI = 'gs://data-lake-henry/pyspark-jobs/cleaning-stage/cleaning_job.py'
 CLUSTER_CONFIG = {
     "master_config" : {
         "machine_type_uri" : "n2-standard-2",
@@ -71,7 +74,31 @@ def test_gcs_to_dataproc():
                                     trigger_rule='all_success'
                                 )
     
-    OBJECT = f'out_dataproc/'
+    @task(task_id='listing_gcs_json_files')
+
+    def list_blobs(bucket_name):
+        SCOPES = ['https://www.googleapis.com/auth/drive.readonly','https://www.googleapis.com/auth/devstorage.full_control','https://www.googleapis.com/auth/drive']
+        SERVICE_ACCOUNT_FILE = './credentials/fiery-protocol-399500-f2566dd92ef4.json'
+
+        creds = service_account.Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
+        
+        """Lists all the blobs in the bucket."""
+        # bucket_name = "your-bucket-name"
+
+        storage_client = storage.Client(credentials=creds)
+
+        # Note: Client.list_blobs requires at least package version 1.17.0.
+        blobs = storage_client.list_blobs(bucket_name)
+
+        # Note: The call returns a response only when the iterator is consumed.
+        names = []
+        for blob in blobs:
+            names.append(blob.name)
+
+        
+        return names
+    
+    OBJECT = f'/pyspark_jobs/cleaning-stage/all_{state}_raw'
     GCS_to_BQ = GCSToBigQueryOperator(
                                         task_id = f'gcs_to_bq_after_cleaning',
                                         bucket=MY_BUCKET,
