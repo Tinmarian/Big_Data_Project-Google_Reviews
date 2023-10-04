@@ -1,15 +1,11 @@
-from airflow.decorators import dag,task,task_group
+from airflow.decorators import dag,task_group
 
 from airflow.providers.google.cloud.operators.dataproc import DataprocCreateClusterOperator, DataprocSubmitJobOperator, DataprocDeleteClusterOperator
 from airflow.providers.google.cloud.transfers.gcs_to_bigquery import GCSToBigQueryOperator
 from airflow.contrib.operators.bigquery_operator import BigQueryCreateEmptyDatasetOperator
 from airflow.providers.google.cloud.operators.gcs import GCSDeleteObjectsOperator
 
-
-from google.cloud import storage
-from google.oauth2 import service_account
 from datetime import datetime, timedelta
-
 
 GCPCONN = "google_cloud_henry"
 PROJECT_ID = 'fiery-protocol-399500'
@@ -18,8 +14,6 @@ REGION = 'us-east1'
 MY_BUCKET_NAME = 'dataproc-pyspark-ops'
 DATASET = 'staging_fph'
 STATES = sorted(['California','Texas','New_York','Colorado','Georgia'])
-
-
 
 PYSPARK_URI = 'gs://dataproc-pyspark-ops/pyspark-jobs/cleaning-stage/cleaning_job.py'
 CLUSTER_CONFIG = {
@@ -43,7 +37,6 @@ PYSPARK_JOB = {
     "pyspark_job": {"main_python_file_uri":PYSPARK_URI,}
 }
 
-
 default_args = {
     "owner" : 'Tinmar Andrade',
     'start_date':datetime(2023,9,30),
@@ -61,14 +54,12 @@ default_args = {
 
 def gcs_to_dataproc():
 
-
     create_dataset = BigQueryCreateEmptyDatasetOperator(task_id="create_dataset",
                                                         gcp_conn_id=GCPCONN,
                                                         dataset_id=DATASET,
                                                         project_id=PROJECT_ID,
                                                         location='us-east1'
                                                     )
-
 
     create_cluster = DataprocCreateClusterOperator(
                                                     task_id='create_dataproc_cluster',
@@ -80,7 +71,6 @@ def gcs_to_dataproc():
                                                     use_if_exists=True
                                                 )
 
-
     job = DataprocSubmitJobOperator(
                                     task_id='pyspark_job',
                                     job=PYSPARK_JOB,
@@ -89,7 +79,6 @@ def gcs_to_dataproc():
                                     gcp_conn_id=GCPCONN,
                                     trigger_rule='all_success'
                                 )
-
 
     @task_group(group_id='unique_state_tables')
     def tg1(states):
@@ -122,7 +111,6 @@ def gcs_to_dataproc():
                                             )
             i += 1
 
-
     delete_cluster = DataprocDeleteClusterOperator(
                                                     task_id='delete_dataproc_cluster',
                                                     project_id=PROJECT_ID,
@@ -132,7 +120,6 @@ def gcs_to_dataproc():
                                                     trigger_rule='all_done'
                                                 )
 
-
     delete_folder = GCSDeleteObjectsOperator(
                                                 task_id='delete_output_folder_pyspark_job',
                                                 gcp_conn_id=GCPCONN,
@@ -140,7 +127,6 @@ def gcs_to_dataproc():
                                                 prefix='out_dataproc/staging/',
                                                 objects=['*/']
                                             )
-
 
     create_dataset >> create_cluster >> job >> tg1(STATES) >> [delete_folder,delete_cluster] 
 
