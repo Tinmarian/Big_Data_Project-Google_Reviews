@@ -11,7 +11,7 @@ CLUSTER_NAME = 'test-dataproc-henry'
 REGION = 'us-east1'
 
 
-PYSPARK_URI = 'gs://data-lake-henry/pyspark-jobs/test_pyspark_job.py'
+PYSPARK_URI = 'gs://data-lake-henry/pyspark-jobs/test_job.py'
 CLUSTER_CONFIG = {
     "master_config" : {
         "machine_type_uri" : "n2-standard-2",
