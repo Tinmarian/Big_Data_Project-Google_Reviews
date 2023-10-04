@@ -91,29 +91,6 @@ def gcs_to_dataproc():
                                 )
 
 
-    # @task(task_id='listing_gcs_json_files')
-    # def list_blobs(bucket_name,states,**kwargs):
-    #     SCOPES = ['https://www.googleapis.com/auth/drive.readonly','https://www.googleapis.com/auth/devstorage.full_control','https://www.googleapis.com/auth/drive']
-    #     SERVICE_ACCOUNT_FILE = './credentials/fiery-protocol-399500-f2566dd92ef4.json'
-        
-    #     CREDS = service_account.Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
-        
-    #     storage_client = storage.Client(credentials=CREDS)
-
-    #     """Lists all the blobs in the bucket."""
-    #     FOLDERS = []
-    #     for state in states:
-    #         blobs = storage_client.list_blobs(bucket_name, prefix=f'out_dataproc/all_{state}_raw')
-    
-    #     # Note: The call returns a response only when the iterator is consumed.
-    
-    #         URI = []
-    #         for blob in blobs:
-    #             if 'json' in blob.name:
-    #                 URI.append(f'gs://{blob.id[:-17]}')
-    #                 kwargs['ti'].xcom_push(key=state, value=URI)
-
-
     @task_group(group_id='unique_state_tables')
     def tg1(states):
         i = 0

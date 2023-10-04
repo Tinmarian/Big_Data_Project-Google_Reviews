@@ -5,7 +5,7 @@ import os
 
 from pyspark.sql import SparkSession
 from pyspark.sql.utils import AnalysisException
-from pyspark.sql.types import IntegerType,StructField,StructType,StringType,ObjectType
+from pyspark.sql.types import IntegerType,StructField,StructType,StringType,LongType,ArrayType
 import pyspark.pandas as ps
 
 # Create a SparkSession
@@ -14,12 +14,12 @@ spk = SparkSession.builder.appName("PySpark Transformations to Populate our Data
 
 states = ['California','Texas','New_York','Colorado','Georgia']
 schema = StructType([
-    StructField('user_id',IntegerType(),False),
+    StructField('user_id',LongType(),False),
     StructField('name',StringType(),True),
-    StructField('time',IntegerType(),True),
+    StructField('time',LongType(),True),
     StructField('rating',IntegerType(),True),
     StructField('text',StringType(),True),
-    StructField('resp',ObjectType(),True),
+    StructField('resp',ArrayType(),True),
     StructField('gmap_id',StringType(),False)
 ])
 
@@ -51,7 +51,7 @@ for state in states:
         else:
             psdfx.loc[i,'resp_time'] = 1
             psdfx.loc[i,'resp_text'] = ''
-    psdfx.resp_time = psdfx.resp_time.fillna(0).apply(lambda x: int(x))
+    psdfx.resp_time = psdfx.resp_time.fillna(0).astype('int64')
     psdfx.resp_text = psdfx.resp_text.fillna('')
     psdfx = psdfx[['user_id', 'name', 'time', 'rating', 'text', 'gmap_id', 'resp_time', 'resp_text']]
 
