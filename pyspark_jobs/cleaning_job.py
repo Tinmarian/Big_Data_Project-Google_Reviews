@@ -2,7 +2,6 @@ import pandas as pd
 import os
 
 from pyspark.sql import SparkSession
-from pyspark.sql.types import StringType
 from pyspark.sql.utils import AnalysisException
 import pyspark.pandas as ps
 
