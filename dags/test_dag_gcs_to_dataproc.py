@@ -11,26 +11,26 @@ CLUSTER_NAME = 'test-dataproc-henry'
 REGION = 'us-east1'
 
 
-PYSPARK_PATH = '../pyspark_jobs/test_pyspark_job.py'
+PYSPARK_URI = 'gs://data-lake-henry/pyspark-jobs/test_pyspark_job.py'
 CLUSTER_CONFIG = {
     "master_config" : {
         "machine_type_uri" : "n2-standard-2",
-        "disk_config" : {"boot_disk_type" : "pd-standard", "boot_disk_size_gb" : 75},
-        "software_config" : {
-                                "image_version" : '2.1.25-ubuntu20'
-                            }
+        "disk_config" : {"boot_disk_type" : "pd-standard", "boot_disk_size_gb" : 75}
     },
     "worker_config" : {
         "num_instances" : 2,
         "machine_type_uri" : "e2-standard-8",
         "disk_config" : {"boot_disk_type" : "pd-standard", "boot_disk_size_gb" : 75}
+    },
+    "software_config" : {
+        "image_version" : '2.1.25-ubuntu20'
     }
 }
 
 PYSPARK_JOB = {
     "reference" : {"project_id":PROJECT_ID},
     "placement" : {"cluster_name":CLUSTER_NAME},
-    "pyspark_job": {"main_python_file_uri":PYSPARK_PATH,}
+    "pyspark_job": {"main_python_file_uri":PYSPARK_URI,}
 }
 
 
