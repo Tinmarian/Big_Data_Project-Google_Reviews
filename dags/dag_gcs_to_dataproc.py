@@ -121,7 +121,7 @@ def gcs_to_dataproc():
             GCS_to_BQ = GCSToBigQueryOperator(
                                                 task_id = f'gcs_to_bq_after_cleaning_{state}',
                                                 bucket=MY_BUCKET_NAME,
-                                                source_objects=[f'out_dataproc/all_{state}_raw/*.csv'],
+                                                source_objects=[f'out_dataproc/staging/all_{state}_raw/*.csv'],
                                                 destination_project_dataset_table= f'{DATASET}.dcs_review_{state}',
                                                 schema_fields=[{'name':'user_id','type':'INT64','mode':'REQUIRED'}, 
                                                                 {'name':'name','type':'STRING','mode':'NULLABLE'}, 

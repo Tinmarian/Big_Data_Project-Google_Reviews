@@ -1,8 +1,10 @@
+import math
 import pandas as pd
 import os
 
 from pyspark.sql import SparkSession
 from pyspark.sql.utils import AnalysisException
+from pyspark.sql.types import IntegerType,StructField,StructType,StringType
 import pyspark.pandas as ps
 
 # Create a SparkSession
@@ -10,6 +12,17 @@ spk = SparkSession.builder.appName("PySpark Transformations to Populate our Data
 # cwd = os.getcwd()
 
 states = ['California','Texas','New_York','Colorado','Georgia']
+newDF = [
+    StructField('user_id',IntegerType(),False),
+    StructField('name',StringType(),True),
+    StructField('time',IntegerType(),True),
+    StructField('rating',IntegerType(),True),
+    StructField('text',StringType(),True),
+    StructField('gmap_id',StringType(),False),
+    StructField('resp_time',IntegerType(),True),
+    StructField('resp_text',StringType(),True)
+]
+FINAL_STRUCT=StructType(fields=newDF)
 
 for state in states:
     
@@ -20,27 +33,16 @@ for state in states:
     while True:
         try:
             # Leemos los archivos en un SPARK Data Frame para poder acceder directamente a GCS
-            sdf = spk.read.json(f'gs://data-lake-henry/{state}_{i}.json')
+            sdf = spk.read.json(f'gs://data-lake-henry/{state}_{i}.json',schema=FINAL_STRUCT)
             # PANDAS API Data Frame: Paso intermedio para generar un PANDAS Data Frame.
             psdf = sdf.pandas_api()
-            # Generamos las primeras transformaciones en PANDAS Data Frame
-            pdf = psdf.to_pandas()
-            pdf.user_id = pdf.user_id.astype(str)
-            pdf.user_id = pdf.user_id.apply(lambda x: x.replace('e+20','').replace('.',''))
-            pdf.user_id = pdf.user_id.apply(lambda x: int(x))
-            pdf.name = pdf.name.astype(str)
-            pdf.text = pdf.text.astype(str)
-            pdf.pics = pdf.pics.astype(str)
-            pdf.gmap_id = pdf.gmap_id.astype(str)
-            # PANDAS API Data Frame
-            psdf = ps.from_pandas(pdf)
             df_list.append(psdf)
             i += 1
         except AnalysisException:
             break
     psdfx = ps.concat(df_list,axis=0)
     
-    # Generamos el segundo grupo de transformaciones a los datos de las reviews de Maps en PANDAS API. Queda la metadata y los archivos de Yelp.
+    # Generamos el primer grupo de transformaciones para los datos de las reviews de Maps en PANDAS API. Queda la metadata y los archivos de Yelp.
     psdfx['resp_time'] = ps.Series()
     psdfx['resp_text'] = ps.Series()
     for i in range(len(psdfx)):
