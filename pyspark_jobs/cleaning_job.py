@@ -5,7 +5,7 @@ import os
 
 from pyspark.sql import SparkSession
 from pyspark.sql.utils import AnalysisException
-from pyspark.sql.types import IntegerType,StructField,StructType,StringType,LongType,ArrayType
+from pyspark.sql.types import IntegerType,StructField,StructType,StringType,LongType,MapType
 import pyspark.pandas as ps
 
 # Create a SparkSession
@@ -19,7 +19,7 @@ schema = StructType([
     StructField('time',LongType(),True),
     StructField('rating',IntegerType(),True),
     StructField('text',StringType(),True),
-    StructField('resp',ArrayType(),True),
+    StructField('resp',MapType(StringType(),StringType()),True),
     StructField('gmap_id',StringType(),False)
 ])
 
@@ -35,6 +35,7 @@ for state in states:
             sdf = spk.read.schema(schema).json(f'gs://data-lake-henry/{state}_{i}.json')[['user_id','name','time','rating','text','resp','gmap_id']]
             # PANDAS API Data Frame: Paso intermedio para generar un PANDAS Data Frame.
             psdf = sdf.pandas_api()
+            psdf['estado'] = state
             df_list.append(psdf)
             i += 1
         except AnalysisException:
