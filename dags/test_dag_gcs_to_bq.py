@@ -28,24 +28,24 @@ PROJECT = 'fiery-protocol-399500'
 #         x = f'Texas_{i}.json'
 #         list_files.append(x)
 
-MY_SOURCE_OBJECTS = ['Texas_1.json',
-                        '1_test.json',
-                        '1_test.ndjson',
-                        'Texas_2.json',
-                        'Texas_3.json',
-                        'Texas_4.json',
-                        'Texas_5.json',
-                        'Texas_6.json',
-                        'Texas_7.json',
-                        'Texas_8.json',
-                        'Texas_9.json',
-                        'Texas_10.json',
-                        'Texas_11.json',
-                        'Texas_12.json',
-                        'Texas_13.json',
-                        'Texas_14.json',
-                        'Texas_15.json',
-                        'Texas_16.json']
+MY_SOURCE_OBJECTS = ['1_test.ndjson',
+                        # 'Texas_1.json',
+                        # '1_test.json',
+                        # 'Texas_2.json',
+                        # 'Texas_3.json',
+                        # 'Texas_4.json',
+                        # 'Texas_5.json',
+                        # 'Texas_6.json',
+                        # 'Texas_7.json',
+                        # 'Texas_8.json',
+                        # 'Texas_9.json',
+                        # 'Texas_10.json',
+                        # 'Texas_11.json',
+                        # 'Texas_12.json',
+                        # 'Texas_13.json',
+                        # 'Texas_14.json',
+                        # 'Texas_15.json',
+                        # 'Texas_16.json']     Se puede generar una tabla con varios archivos que contengan el mismo "schema".
 
 @dag(
     'test_gcs_to_bq',
