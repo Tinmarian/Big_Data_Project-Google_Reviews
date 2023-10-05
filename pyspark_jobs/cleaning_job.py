@@ -86,8 +86,8 @@ for state in STATES:
     psdfx = ps.concat(df_list,axis=0)
 
     # Generamos el primer grupo de transformaciones para los datos de las reviews de Maps en PANDAS API. Queda la metadata y los archivos de Yelp.
-    psdfx['resp_time'] = ps.Series(dtype=LongType)
-    psdfx['resp_text'] = ps.Series(dtype=LongType)
+    psdfx['resp_time'] = ps.Series(dtype=int)
+    psdfx['resp_text'] = ps.Series(dtype=int)
     for i in range(len(psdfx)):
         if type(psdfx.resp[i]) == dict:
             psdfx.loc[i,'resp_time'] = psdfx.resp[i]['time']
