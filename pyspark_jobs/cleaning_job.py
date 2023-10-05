@@ -95,7 +95,7 @@ for state in STATES:
         else:
             psdfx.loc[i,'resp_time'] = 1
             psdfx.loc[i,'resp_text'] = ''
-    psdfx.resp_time = psdfx.resp_time.fillna(0).astype('int')
+    psdfx.resp_time = psdfx.resp_time.fillna(0).astype(LongType)
     psdfx.resp_text = psdfx.resp_text.fillna('')
     psdfx = psdfx[['gmap_id','user_id','name','time','text','rating','resp_time','resp_text']]
 
