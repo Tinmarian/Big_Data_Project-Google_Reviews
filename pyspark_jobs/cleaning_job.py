@@ -105,9 +105,10 @@ for state in STATES:
 
     # Aquí concatenamos todos los archivos del estado en curso a los demás estados, para obtener una tabla total de estados.
     psdfx = ps.concat(psdf,axis=0)
+    psdf.spark.unpersist()
 
 # Convertimos el dataframe de Pandas API on Spark a un dataframe de Spark
-sdf = psdf.to_spark()
+sdf = psdfx.to_spark()
 
 # Guardamos las tablas concatenadas en archivos .json en GCS.
 sdf.write.mode('overwrite').format('csv').save(f'gs://dataproc-pyspark-ops/out_dataproc/staging/table_of_states')

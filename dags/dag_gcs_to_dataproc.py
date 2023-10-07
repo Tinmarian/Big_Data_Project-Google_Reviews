@@ -24,9 +24,8 @@ CLUSTER_CONFIG = {
     },
     "worker_config" : {
         "num_instances" : 2,
-        "machine_type_uri" : "c3d-highcpu-4",
-        "threads" : 1,
-        "disk_config" : {"boot_disk_type" : "pd-standard", "boot_disk_size_gb" : 75}
+        "machine_type_uri" : "c3-highcpu-4",
+        "disk_config" : {"boot_disk_type" : "pd-balanced", "boot_disk_size_gb" : 75}
     },
     "software_config" : {
         "image_version" : '2.1.25-ubuntu20'
