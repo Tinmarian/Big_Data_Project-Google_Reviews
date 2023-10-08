@@ -19,11 +19,11 @@ DATASET = 'staging_fph'
 PYSPARK_URI = 'gs://dataproc-pyspark-ops/pyspark-jobs/cleaning-stage/cleaning_job.py'
 CLUSTER_CONFIG = {
     "master_config" : {
-        "machine_type_uri" : "e2-standard-4",
+        "machine_type_uri" : "e2-standard-2",
         "disk_config" : {"boot_disk_type" : "pd-standard", "boot_disk_size_gb" : 75}
     },
     "worker_config" : {
-        "num_instances" : 2,
+        "num_instances" : 4,
         "machine_type_uri" : "c3-highcpu-4",
         "disk_config" : {"boot_disk_type" : "pd-balanced", "boot_disk_size_gb" : 75}
     },
