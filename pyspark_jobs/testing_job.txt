@@ -1,3 +1,0 @@
-Hola PySpark!
-Este es mi primer DIY job end to end
-Let's do this!
