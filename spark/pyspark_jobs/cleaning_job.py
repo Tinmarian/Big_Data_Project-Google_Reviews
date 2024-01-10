@@ -1,3 +1,6 @@
+
+# Actualmente, el código funciona para generar una limpieza sencilla y una concatenación de 2 estados o más.
+
 import pandas as pd
 # import numpy as np
 import os
